@@ -41,7 +41,7 @@ executables:
 
 tests:
   hippogriff-test:
-    main:                Spec.hs
+    main:                TestMain.hs
     source-dirs:         test
     ghc-options:
     - -threaded

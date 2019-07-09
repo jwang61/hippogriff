@@ -1,4 +1,4 @@
-module Lex (lex) where
+module Lex (Lex.lex) where
 
 import qualified Data.Text as T
 import qualified Data.Char as Char

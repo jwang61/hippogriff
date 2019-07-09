@@ -1,43 +1,49 @@
-module Parse where
+module Parse (parse)  where
+
+import Control.Monad.State (State, get, put, evalState)
 
 import qualified Token as Tok
 import qualified AST as AST
 
+type ParserM = State [Tok.Token]
+
 parse :: [Tok.Token] -> AST.Prog
-parse = AST.Prog . parseFunc
+parse = evalState parseProg
 
-parseRetType :: Tok.Token -> AST.ReturnType
-parseRetType Tok.IntKeyword = AST.IntType
-parseRetType Tok.CharKeyword = AST.CharType
-parseRetType _ = error "Expected a valid return type."
+parseProg :: ParserM AST.Prog
+parseProg = AST.Prog <$> parseFunc
 
-parseRetType :: [Tok.Token] -> (AST.ReturnType, [Tok.Token])
-parseRetType Tok.IntKeyword:rest = (AST.IntType,rest)
-parseRetType Tok.CharKeyword = AST.CharType
-parseRetType _ = error "Expected a valid return type."
+getToken :: ParserM (Maybe Tok.Token)
+getToken = do
+  toks <- get
+  if null toks
+  then return Nothing
+  else do
+    put $ tail toks
+    return $ Just (head toks)
 
-parseIdentifier :: Tok.Token -> AST.Identifier
-parseIdentifier (Tok.Identifier str) = AST.Identifier str
-parseIdentifier _ = error "Expected valid identifier format."
+parseRetType :: ParserM AST.ReturnType
+parseRetType = do
+  tok <- getToken
+  case tok of
+    Just Tok.IntKeyword  -> return AST.IntType
+    Just Tok.CharKeyword -> return AST.CharType
+    _ -> fail "Error: Expected a valid return type"
 
-parseFunc :: [Tok.Token] -> AST.Func
-parseFunc tokens = AST.Func retType funcName body
-  where retType = parseRetType $ head tokens
-        funcName = parseIdentifier $ head $ tail tokens
-        body =
+parseIdentifier :: ParserM AST.Identifier
+parseIdentifier = do
+  tok <- getToken
+  case tok of
+    Just (Tok.Identifier str) -> return $ AST.Identifier str
+    _ -> error "Expected valid identifier format."
 
+-- Temp initial func body
+tempFuncBody :: ParserM AST.FuncBody
+tempFuncBody = return [AST.ReturnVal . AST.IntConst $ 1]
 
-          -- module AST where
-
-          --   data ReturnType = IntType
-          --                   | CharType
-          --                   deriving (Show, Eq)
-
-          --   data Identifier = Identifier String deriving (Show, Eq)
-
-          --   data Const = IntConst Int deriving (Show, Eq)
-          --   data Statement = ReturnVal Const deriving (Show, Eq)
-
-          --   data FuncBody = [Statement]
-          --   data Func = Func ReturnType Identifier FuncBody deriving (Show, Eq)
-          --   data Prog = Prog Func deriving (Show, Eq)
+parseFunc :: ParserM AST.Func
+parseFunc = do
+  retType  <- parseRetType
+  funcName <- parseIdentifier
+  body     <- tempFuncBody
+  return $ AST.Func retType funcName body

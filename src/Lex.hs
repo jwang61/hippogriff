@@ -5,8 +5,8 @@ import qualified Data.Char as Char
 import qualified Text.Regex as Regex
 import qualified Token as Tok
 
-charRegex :: Regex.Regex
-charRegex = Regex.mkRegex "[a-zA-Z]+"
+idRegex :: Regex.Regex
+idRegex = Regex.mkRegex "^[_a-zA-Z][_a-zA-Z0-9]*"
 
 intRegex :: Regex.Regex
 intRegex = Regex.mkRegex "[0-9]+"
@@ -34,10 +34,17 @@ lexRestAlphaNum x = token : (lexRest $ T.pack rest)
                 then (Tok.IntLiteral (read b), c)
                 else (token', rest')
             Nothing -> (token', rest')
-        charMatch = Regex.matchRegexAll charRegex (T.unpack x)
-        (token', rest') = case charMatch of
+        idMatch = Regex.matchRegexAll idRegex (T.unpack x)
+        (token', rest') = case idMatch of
             Just (a, b, c, _) ->
                 if a == ""
-                then (Tok.Identifier b, c)
+                then (identifierOrKeyword b, c)
                 else error "No Match"
             Nothing -> error "No match"
+
+identifierOrKeyword :: String -> Tok.Tokens
+identifierOrKeyword str
+  | str == "return" = Tok.ReturnKeyword
+  | str == "int" = Tok.IntKeyword
+  | str == "char" = Tok.CharKeyword
+  | otherwise = Tok.Identifier str

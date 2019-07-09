@@ -28,7 +28,7 @@ library:
   source-dirs: src
 
 executables:
-  hippogriff-exe:
+  hippogriff:
     main:                Main.hs
     source-dirs:         app
     ghc-options:

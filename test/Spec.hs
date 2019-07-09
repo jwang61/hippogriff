@@ -12,27 +12,35 @@ testLexInteger =
   where expected = [Tok.IntLiteral 123]
         inputStr = (T.pack "123")
 
-testLexIdentifier :: Test
-testLexIdentifier =
+testLexIdentifierAlpha :: Test
+testLexIdentifierAlpha =
   TestCase $ assertEqual ("Lexing: " ++ show inputStr) expected (L.lex inputStr)
   where expected = [Tok.Identifier "foo"]
         inputStr = (T.pack "foo")
 
--- testLexIntKeyword :: Test
--- testLexIntKeyword =
---   TestCase $ assertEqual ("Lexing: " ++ show inputStr) expected (L.lex inputStr)
---   where expected = [Tok.IntKeyword]
---         inputStr = (T.pack "int")
+testLexIntKeyword :: Test
+testLexIntKeyword =
+  TestCase $ assertEqual ("Lexing: " ++ show inputStr) expected (L.lex inputStr)
+  where expected = [Tok.IntKeyword]
+        inputStr = (T.pack "int")
 
--- testLexCharAndIntKeyword :: Test
--- testLexCharAndIntKeyword =
---   TestCase $ assertEqual ("Lexing: " ++ show inputStr) expected (L.lex inputStr)
---   where expected = [Tok.CharKeyword "my_var3"]
---         inputStr = (T.pack "my_var3")
+testLexIdentifierAlphaNum :: Test
+testLexIdentifierAlphaNum =
+  TestCase $ assertEqual ("Lexing: " ++ show inputStr) expected (L.lex inputStr)
+  where expected = [Tok.Identifier "myvar3"]
+        inputStr = (T.pack "myvar3")
+
+testLexIdentifierAlphaNumUnderscore :: Test
+testLexIdentifierAlphaNumUnderscore =
+  TestCase $ assertEqual ("Lexing: " ++ show inputStr) expected (L.lex inputStr)
+  where expected = [Tok.Identifier "_myvar3"]
+        inputStr = (T.pack "_myvar3")
 
 tests :: Test
 tests = TestList [ testLexInteger
-                 , testLexIdentifier
+                 , testLexIdentifierAlpha
+                 , testLexIdentifierAlphaNum
+                 , testLexIdentifierAlphaNumUnderscore
                 --  , testLexIntKeyword
                 --  , testLexCharAndIntKeyword
                  ]

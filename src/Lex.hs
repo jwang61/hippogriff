@@ -31,13 +31,13 @@ lexRestAlphaNum x = token : (lexRest $ T.pack rest)
         (token, rest) = case intMatch of
             Just (a, b, c, _) ->
                 if a == ""
-                then (Tok.IntKeyword (read b), c)
+                then (Tok.IntLiteral (read b), c)
                 else (token', rest')
             Nothing -> (token', rest')
         charMatch = Regex.matchRegexAll charRegex (T.unpack x)
         (token', rest') = case charMatch of
             Just (a, b, c, _) ->
                 if a == ""
-                then (Tok.CharKeyword b, c)
+                then (Tok.Identifier b, c)
                 else error "No Match"
             Nothing -> error "No match"

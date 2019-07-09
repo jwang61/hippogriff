@@ -5,9 +5,10 @@ data Tokens = OpenBrace
             | OpenParenthesis
             | CloseParenthesis
             | Semicolon
-            | IntKeyword Int
-            | CharKeyword String
+            | IntKeyword
+            | CharKeyword
             | ReturnKeyword
-            | Identifier
+            | Identifier String
             | IntLiteral Int
+            | CharLiteral Char
             deriving (Show, Eq)

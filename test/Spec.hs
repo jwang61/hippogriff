@@ -12,29 +12,29 @@ testLexInteger =
   where expected = [Tok.IntLiteral 123]
         inputStr = (T.pack "123")
 
-testLexCharKeyword :: Test
-testLexCharKeyword =
+testLexIdentifier :: Test
+testLexIdentifier =
   TestCase $ assertEqual ("Lexing: " ++ show inputStr) expected (L.lex inputStr)
-  where expected = [Tok.CharKeyword "foo"]
+  where expected = [Tok.Identifier "foo"]
         inputStr = (T.pack "foo")
 
-testLexIntKeyword :: Test
-testLexIntKeyword =
-  TestCase $ assertEqual ("Lexing: " ++ show inputStr) expected (L.lex inputStr)
-  where expected = [Tok.IntKeyword 123]
-        inputStr = (T.pack "int")
+-- testLexIntKeyword :: Test
+-- testLexIntKeyword =
+--   TestCase $ assertEqual ("Lexing: " ++ show inputStr) expected (L.lex inputStr)
+--   where expected = [Tok.IntKeyword]
+--         inputStr = (T.pack "int")
 
-testLexCharAndIntKeyword :: Test
-testLexCharAndIntKeyword =
-  TestCase $ assertEqual ("Lexing: " ++ show inputStr) expected (L.lex inputStr)
-  where expected = [Tok.CharKeyword "my_var3"]
-        inputStr = (T.pack "my_var3")
+-- testLexCharAndIntKeyword :: Test
+-- testLexCharAndIntKeyword =
+--   TestCase $ assertEqual ("Lexing: " ++ show inputStr) expected (L.lex inputStr)
+--   where expected = [Tok.CharKeyword "my_var3"]
+--         inputStr = (T.pack "my_var3")
 
 tests :: Test
 tests = TestList [ testLexInteger
-                 , testLexCharKeyword
-                 , testLexIntKeyword
-                 , testLexCharAndIntKeyword
+                 , testLexIdentifier
+                --  , testLexIntKeyword
+                --  , testLexCharAndIntKeyword
                  ]
 
 main :: IO Counts

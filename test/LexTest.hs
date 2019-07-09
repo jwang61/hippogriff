@@ -41,8 +41,7 @@ tests = TestList [ testLexInteger
                  , testLexIdentifierAlpha
                  , testLexIdentifierAlphaNum
                  , testLexIdentifierAlphaNumUnderscore
-                --  , testLexIntKeyword
-                --  , testLexCharAndIntKeyword
+                 , testLexIntKeyword
                  ]
 
 main :: IO Counts

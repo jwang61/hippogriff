@@ -11,10 +11,10 @@ idRegex = Regex.mkRegex "^[_a-zA-Z][_a-zA-Z0-9]*"
 intRegex :: Regex.Regex
 intRegex = Regex.mkRegex "[0-9]+"
 
-lex :: T.Text -> [Tok.Tokens]
+lex :: T.Text -> [Tok.Token]
 lex s = lexRest . T.strip $ s
 
-lexRest :: T.Text -> [Tok.Tokens]
+lexRest :: T.Text -> [Tok.Token]
 lexRest text
   | T.null text = []
   | T.head text == '{' = Tok.OpenBrace : (lexRest $ T.tail text)
@@ -25,7 +25,7 @@ lexRest text
   | Char.isSpace $ T.head text = lexRest $ T.tail text
   | otherwise = lexRestAlphaNum text
 
-lexRestAlphaNum :: T.Text -> [Tok.Tokens]
+lexRestAlphaNum :: T.Text -> [Tok.Token]
 lexRestAlphaNum x = token : (lexRest $ T.pack rest)
   where intMatch = Regex.matchRegexAll intRegex (T.unpack x)
         (token, rest) = case intMatch of
@@ -42,9 +42,9 @@ lexRestAlphaNum x = token : (lexRest $ T.pack rest)
                 else error "No Match"
             Nothing -> error "No match"
 
-identifierOrKeyword :: String -> Tok.Tokens
+identifierOrKeyword :: String -> Tok.Token
 identifierOrKeyword str
-  | str == "return" = Tok.ReturnKeyword
   | str == "int" = Tok.IntKeyword
   | str == "char" = Tok.CharKeyword
+  | str == "return" = Tok.ReturnKeyword
   | otherwise = Tok.Identifier str

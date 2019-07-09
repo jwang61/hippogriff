@@ -1,6 +1,6 @@
 module Token where
 
-data Tokens = OpenBrace
+data Token = OpenBrace
             | CloseBrace
             | OpenParenthesis
             | CloseParenthesis

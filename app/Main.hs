@@ -1,6 +1,13 @@
 module Main where
 
-import Lib
+import qualified Data.Text.IO as IO
+import qualified Lex as L
+--import qualified Token as Tok
+
+file :: FilePath
+file = "testfile.c"
 
 main :: IO ()
-main = someFunc
+main = do
+    contents <- IO.readFile file
+    print . L.lex $ contents

@@ -21,15 +21,18 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
+- text
+- regex-compat
 
 library:
   source-dirs: src
 
 executables:
-  hippogriff-exe:
+  hippogriff:
     main:                Main.hs
     source-dirs:         app
     ghc-options:
+    - -Wall
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
@@ -46,3 +49,4 @@ tests:
     - -with-rtsopts=-N
     dependencies:
     - hippogriff
+    - HUnit

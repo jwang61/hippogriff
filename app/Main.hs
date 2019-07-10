@@ -12,4 +12,5 @@ main = do
     contents <- IO.readFile file
     let tokens = L.lex contents
         ast = P.parse tokens
+    print tokens
     print ast

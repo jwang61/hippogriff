@@ -1,5 +1,7 @@
 module Token where
 
+import qualified Data.Text as T
+
 data Token = OpenBrace
             | CloseBrace
             | OpenParenthesis
@@ -8,7 +10,7 @@ data Token = OpenBrace
             | IntKeyword
             | CharKeyword
             | ReturnKeyword
-            | Identifier String
+            | Identifier T.Text
             | IntLiteral Int
             | CharLiteral Char
             deriving (Show, Eq)

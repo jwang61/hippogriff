@@ -1,18 +1,18 @@
-module Lex where
+module Lex (Lex.lex) where
 
 import qualified Data.Text as T
 import qualified Data.Char as Char
 import qualified Text.Regex as Regex
 import qualified Token as Tok
 
+lex :: T.Text -> [Tok.Token]
+lex s = lexRest . T.strip $ s
+
 idRegex :: Regex.Regex
 idRegex = Regex.mkRegex "^[_a-zA-Z][_a-zA-Z0-9]*"
 
 intRegex :: Regex.Regex
 intRegex = Regex.mkRegex "[0-9]+"
-
-lex :: T.Text -> [Tok.Token]
-lex s = lexRest . T.strip $ s
 
 lexRest :: T.Text -> [Tok.Token]
 lexRest text

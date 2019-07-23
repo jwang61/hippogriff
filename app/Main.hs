@@ -2,7 +2,7 @@ module Main where
 
 import qualified Data.Text.IO as IO
 import qualified Lex as L
---import qualified Token as Tok
+import qualified Parse as P
 
 file :: FilePath
 file = "testfile.c"
@@ -10,4 +10,7 @@ file = "testfile.c"
 main :: IO ()
 main = do
     contents <- IO.readFile file
-    print . L.lex $ contents
+    let tokens = L.lex contents
+        ast = P.parse tokens
+    print tokens
+    print ast

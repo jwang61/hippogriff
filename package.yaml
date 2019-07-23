@@ -23,6 +23,7 @@ dependencies:
 - base >= 4.7 && < 5
 - text
 - regex-compat
+- mtl
 
 library:
   source-dirs: src
@@ -41,7 +42,7 @@ executables:
 
 tests:
   hippogriff-test:
-    main:                Spec.hs
+    main:                TestMain.hs
     source-dirs:         test
     ghc-options:
     - -threaded

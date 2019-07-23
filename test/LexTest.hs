@@ -1,4 +1,4 @@
-module Main where
+module LexTest (lexTests) where
 
 import qualified Data.Text as T
 import           Test.HUnit
@@ -36,13 +36,10 @@ testLexIdentifierAlphaNumUnderscore =
   where expected = [Tok.Identifier "_myvar3"]
         inputStr = (T.pack "_myvar3")
 
-tests :: Test
-tests = TestList [ testLexInteger
+lexTests :: Test
+lexTests = TestList [ testLexInteger
                  , testLexIdentifierAlpha
                  , testLexIdentifierAlphaNum
                  , testLexIdentifierAlphaNumUnderscore
                  , testLexIntKeyword
                  ]
-
-main :: IO Counts
-main = runTestTT tests

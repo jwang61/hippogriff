@@ -24,6 +24,9 @@ lexRest text
   | T.head text == '(' = Tok.OpenParenthesis : (lexRest $ T.tail text)
   | T.head text == ')' = Tok.CloseParenthesis : (lexRest $ T.tail text)
   | T.head text == ';' = Tok.Semicolon : (lexRest $ T.tail text)
+  | T.head text == '-' = Tok.Negation : (lexRest $ T.tail text)
+  | T.head text == '~' = Tok.BitwiseComplement : (lexRest $ T.tail text)
+  | T.head text == '!' = Tok.LogicalNegation : (lexRest $ T.tail text)
   | Char.isSpace $ T.head text = lexRest $ T.tail text
   | otherwise = lexRestAlphaNum text
 

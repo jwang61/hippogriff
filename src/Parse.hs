@@ -46,6 +46,16 @@ assertNextToken expectedTok errMsg = do
     return ()
   else error errMsg
 
+parseExpression :: ParserM AST.Exp
+parseExpression = do
+  tok <- pop
+  case tok of
+    Just (Tok.IntLiteral val) -> return . AST.Const $ AST.IntConst val
+    Just (Tok.Negation) -> AST.UnopExp AST.Negation <$> parseExpression
+    Just (Tok.BitwiseComplement) -> AST.UnopExp AST.BitwiseComplement <$> parseExpression
+    Just (Tok.LogicalNegation) -> AST.UnopExp AST.LogicalNegation <$> parseExpression
+    _ -> fail "Error: Expected a valid expression"
+
 parseRetType :: ParserM AST.ReturnType
 parseRetType = do
   tok <- pop
@@ -61,21 +71,14 @@ parseIdentifier = do
     Just (Tok.Identifier str) -> return $ AST.Identifier str
     _ -> error "Expected valid identifier format."
 
-parseConst :: ParserM AST.Const
-parseConst = do
-  tok <- pop
-  case tok of
-    Just (Tok.IntLiteral val) -> return $ AST.IntConst val
-    _ -> error "Expected const format"
-
 parseStatement :: ParserM AST.Statement
 parseStatement = do
   tok <- pop
   case tok of
     Just (Tok.ReturnKeyword) -> do
-      cons <- parseConst
+      exps <- parseExpression
       assertNextToken Tok.Semicolon "Expected semicolon in statement"
-      return . AST.ReturnVal $ cons
+      return . AST.ReturnVal $ exps
     _ -> error ("Unexpected token in statement" ++ show tok)
 
 parseFuncBody :: ParserM AST.FuncBody

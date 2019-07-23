@@ -22,9 +22,22 @@ genFunc func =
   ] ++ (genFuncBody $ AST.funcBody func)
 
 genFuncBody :: AST.FuncBody -> [T.Text]
-genFuncBody =  map genStatement
+genFuncBody = map (T.unlines . genStatement)
 
-genStatement :: AST.Statement -> T.Text
-genStatement (AST.ReturnVal cons) =
-  T.pack $ "        movl    $" <> (show . AST.intVal $ cons) <> ", %eax \n\
-  \        ret"
+genExpression :: AST.Exp -> [T.Text]
+genExpression (AST.Const val) =
+  [T.pack $ "        movl    $" <> (show . AST.intVal $ val) <> ", %eax"]
+genExpression (AST.UnopExp op exp) =
+  (genExpression exp) ++ [ instructions ]
+  where
+    instructions = case op of
+      AST.Negation -> "        neg     %eax"
+      AST.BitwiseComplement -> "        not     %eax"
+      AST.LogicalNegation ->
+        "        cmpl   $0, %eax\n\
+        \        movl   $0, %eax\n\
+        \        sete   %al"
+
+genStatement :: AST.Statement -> [T.Text]
+genStatement (AST.ReturnVal exps) =
+  (genExpression exps) ++ ["        ret"]

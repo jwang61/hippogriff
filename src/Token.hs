@@ -13,4 +13,7 @@ data Token = OpenBrace
             | Identifier T.Text
             | IntLiteral Int
             | CharLiteral Char
+            | Negation
+            | BitwiseComplement
+            | LogicalNegation
             deriving (Show, Eq)

@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Lex (Lex.lex) where
 
 import qualified Data.Text as T
@@ -38,11 +40,11 @@ lexRestAlphaNum x = token : (lexRest $ T.pack rest)
         (token', rest') = case idMatch of
             Just (a, b, c, _) ->
                 if a == ""
-                then (identifierOrKeyword b, c)
+                then (identifierOrKeyword (T.pack b), c)
                 else error "No Match"
             Nothing -> error "No match"
 
-identifierOrKeyword :: String -> Tok.Token
+identifierOrKeyword :: T.Text -> Tok.Token
 identifierOrKeyword str
   | str == "int" = Tok.IntKeyword
   | str == "char" = Tok.CharKeyword

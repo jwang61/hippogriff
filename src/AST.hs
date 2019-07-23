@@ -1,10 +1,12 @@
 module AST where
 
+import qualified Data.Text as T
+
 data ReturnType = IntType
                 | CharType
                 deriving (Show, Eq)
 
-data Identifier = Identifier { idStr :: String } deriving (Show, Eq)
+data Identifier = Identifier { idStr :: T.Text } deriving (Show, Eq)
 
 data Const = IntConst { intVal :: Int } deriving (Show, Eq)
 data Statement = ReturnVal { const :: Const } deriving (Show, Eq)

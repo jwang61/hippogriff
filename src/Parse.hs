@@ -3,7 +3,7 @@ module Parse (parse)  where
 import Control.Monad.State (State, get, put, evalState)
 
 import qualified Token as Tok
-import qualified AST as AST
+import qualified AST
 
 type ParserM = State [Tok.Token]
 

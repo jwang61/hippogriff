@@ -2,8 +2,9 @@
 
 module Lex (Lex.lex) where
 
-import qualified Data.Text as T
+import           Data.Foldable (asum)
 import qualified Data.Char as Char
+import qualified Data.Text as T
 import qualified Text.Regex as Regex
 import qualified Token as Tok
 
@@ -19,33 +20,34 @@ intRegex = Regex.mkRegex "[0-9]+"
 lexRest :: T.Text -> [Tok.Token]
 lexRest text
   | T.null text = []
-  | T.head text == '{' = Tok.OpenBrace : (lexRest $ T.tail text)
-  | T.head text == '}' = Tok.CloseBrace : (lexRest $ T.tail text)
-  | T.head text == '(' = Tok.OpenParenthesis : (lexRest $ T.tail text)
-  | T.head text == ')' = Tok.CloseParenthesis : (lexRest $ T.tail text)
-  | T.head text == ';' = Tok.Semicolon : (lexRest $ T.tail text)
-  | T.head text == '-' = Tok.Negation : (lexRest $ T.tail text)
-  | T.head text == '~' = Tok.BitwiseComplement : (lexRest $ T.tail text)
-  | T.head text == '!' = Tok.LogicalNegation : (lexRest $ T.tail text)
-  | Char.isSpace $ T.head text = lexRest $ T.tail text
+  | firstChar == '{' = Tok.OpenBrace : rest
+  | firstChar == '}' = Tok.CloseBrace : rest
+  | firstChar == '(' = Tok.OpenParenthesis : rest
+  | firstChar == ')' = Tok.CloseParenthesis : rest
+  | firstChar == ';' = Tok.Semicolon : rest
+  | firstChar == '-' = Tok.Negation : rest
+  | firstChar == '~' = Tok.BitwiseComplement : rest
+  | firstChar == '!' = Tok.LogicalNegation : rest
+  | Char.isSpace $ firstChar = rest
   | otherwise = lexRestAlphaNum text
+  where firstChar = T.head text
+        rest = lexRest $ T.tail text
+
+tryRegexMatch :: Regex.Regex -> (String -> Tok.Token) -> T.Text -> Maybe (Tok.Token, T.Text)
+tryRegexMatch regex strToTok x =
+  let regMatch = Regex.matchRegexAll regex (T.unpack x)
+      matchesToTok (a, b, c, _) = if a == "" then Just (strToTok b, T.pack c) else Nothing
+  in regMatch >>= matchesToTok
 
 lexRestAlphaNum :: T.Text -> [Tok.Token]
-lexRestAlphaNum x = token : (lexRest $ T.pack rest)
-  where intMatch = Regex.matchRegexAll intRegex (T.unpack x)
-        (token, rest) = case intMatch of
-            Just (a, b, c, _) ->
-                if a == ""
-                then (Tok.IntLiteral (read b), c)
-                else (token', rest')
-            Nothing -> (token', rest')
-        idMatch = Regex.matchRegexAll idRegex (T.unpack x)
-        (token', rest') = case idMatch of
-            Just (a, b, c, _) ->
-                if a == ""
-                then (identifierOrKeyword (T.pack b), c)
-                else error "No Match"
-            Nothing -> error "No match"
+lexRestAlphaNum x = token : (lexRest rest)
+  where regexes = [ tryRegexMatch intRegex (Tok.IntLiteral . read)
+                  , tryRegexMatch idRegex (identifierOrKeyword . T.pack)
+                  ]
+        matchResult = asum $ map ($ x) regexes
+        (token, rest) = case matchResult of
+           Just (a, b) -> (a, b)
+           Nothing -> error "No Matches"
 
 identifierOrKeyword :: T.Text -> Tok.Token
 identifierOrKeyword str
